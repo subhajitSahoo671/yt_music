@@ -45,7 +45,7 @@ class _FavoriteButtonState extends State<FavoriteButton> {
         return IconButton(
                         onPressed: () async{
                         await context.read<FavoriteButtonCubit>().favoriteButtonUpdated(
-                            widget.songEntity.genre!
+                            widget.songEntity
                           );
                           if (widget.function != null) {
                             widget.function!();
@@ -66,7 +66,7 @@ class _FavoriteButtonState extends State<FavoriteButton> {
         return IconButton(
                         onPressed: () {
                             context.read<FavoriteButtonCubit>().favoriteButtonUpdated(
-                            widget.songEntity.genre!
+                            widget.songEntity
                           );
 
                           // isFavorite = state.isFavorite;

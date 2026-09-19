@@ -52,9 +52,15 @@ dependencies:
   font_awesome_flutter: ^11.0.0
   flutter_launcher_icons: ^0.14.4
   light_dark_theme_toggle: ^1.1.2
+  http: ^1.6.0
+  # ytmusicapi_dart: ^2.4.1
+  # dart_ytmusic_api: ^1.3.7
+  # youtube_explode_dart: ^3.1.0
+  # youtube_player_flutter: ^10.0.1
   # on_audio_query: ^2.9.0
   # transparent_image: ^2.0.1
   # audio_video_progress_bar: ^2.0.3
+  skeletonizer: ^3.0.0
 
 dev_dependencies:
   flutter_test:

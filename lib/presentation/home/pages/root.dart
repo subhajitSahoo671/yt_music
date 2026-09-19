@@ -27,7 +27,7 @@ class _RootPageState extends State<RootPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(create: (context) => PlayListCubit()..getPlayList(), 
+    return BlocProvider(create: (context) => PlayListCubit()..getBollyHits(), 
               child: BlocBuilder<PlayListCubit, PlayListState>(
                 builder: (context, state) {
                   if (state is PlayListLoading) {
@@ -37,22 +37,10 @@ class _RootPageState extends State<RootPage> {
                          );
                       }
                  if (state is PlayListLoaded) {
-                  return FutureBuilder<List<MediaItem>>(
-                    future: state.getMediaItems(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator.adaptive());
-                      }
-                          if (snapshot.hasData && snapshot.data != null) {
-                            return HomePage(
+                  return HomePage(
                               audioHandler: _audioHandler,
-                              songs: snapshot.data!,
+                              songs: state.songs,
                             );
-                          }
-                       return Container();
-                    },
-                    
-               );
                   
                 }
                 return Container();

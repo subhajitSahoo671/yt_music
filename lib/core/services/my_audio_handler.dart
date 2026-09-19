@@ -8,12 +8,47 @@ import 'package:just_audio/just_audio.dart';
 
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler{
 
-  AudioPlayer audioPlayer=AudioPlayer();
+  AudioPlayer audioPlayer=AudioPlayer(
+    // handleAudioSessionActivation: false,
+    // handleInterruptions: false 
+  );
+
+  String _lastQueueKey = '';
   
   // Stream subscriptions to manage and prevent duplicates
   StreamSubscription? _playbackEventSubscription;
   StreamSubscription? _processingStateSubscription;
   StreamSubscription? _currentIndexSubscription;
+
+  bool _isSameQueue(List<MediaItem> songs) {
+    if (queue.value.length != songs.length) return false;
+    if (songs.isEmpty) return queue.value.isEmpty;
+
+    final currentKey = songs.map((song) => song.id).join('|');
+    return _lastQueueKey == currentKey;
+  }
+
+  Future<void> initSongsIfNeeded({required List<MediaItem> songs}) async {
+    if (songs.isEmpty) {
+      queue.add([]);
+      mediaItem.add(null);
+      _lastQueueKey = '';
+      return;
+    }
+
+    final nextQueueKey = songs.map((song) => song.id).join('|');
+
+    if (_lastQueueKey == nextQueueKey && queue.value.length == songs.length) {
+      final currentIndex = audioPlayer.currentIndex;
+      if (currentIndex != null && currentIndex < queue.value.length) {
+        mediaItem.add(queue.value[currentIndex]);
+      }
+      return;
+    }
+
+    await initSongs(songs: songs);
+    _lastQueueKey = nextQueueKey;
+  }
   
   
   UriAudioSource _createAudioSource(MediaItem item){
@@ -75,26 +110,27 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler{
       // Cancel existing subscriptions to avoid duplicates
       _playbackEventSubscription?.cancel();
       _processingStateSubscription?.cancel();
-      
-      _playbackEventSubscription = audioPlayer.playbackEventStream.listen(_boardcastState);
-      
-      final audioSource = songs.map(_createAudioSource).toList();
+      _currentIndexSubscription?.cancel();
 
-      await audioPlayer.setAudioSources(audioSource);
+      final freshSongs = List<MediaItem>.from(songs);
 
-      //add the songs to the queue
-      final newQueue = queue.value..addAll(songs);  
-      queue.add(newQueue);
-
-      // Ensure we have a current mediaItem for the notification/controls
-      if (newQueue.isNotEmpty && mediaItem.value == null) {
-        mediaItem.add(newQueue[0]);
+      if (freshSongs.isEmpty) {
+        queue.add([]);
+        mediaItem.add(null);
+        return;
       }
 
-      //listen for changes in the current song index
-      _listenForCurrentSongIndexChanges();
+      final audioSource = freshSongs.map(_createAudioSource).toList();
+      await audioPlayer.setAudioSources(audioSource);
 
-    // Handle completion of a song to automatically skip to the next one
+      // Replace the queue completely instead of appending to the previous one.
+      queue.add(freshSongs);
+      mediaItem.add(freshSongs.first);
+
+      _listenForCurrentSongIndexChanges();
+      _playbackEventSubscription = audioPlayer.playbackEventStream.listen(_boardcastState);
+
+      // Handle completion of a song to automatically skip to the next one
       _processingStateSubscription = audioPlayer.processingStateStream.listen((state) {
         log("Processing state: $state");
         if(state == ProcessingState.completed){

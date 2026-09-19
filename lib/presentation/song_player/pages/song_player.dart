@@ -11,11 +11,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class SongPlayerPage extends StatelessWidget {
   final MediaItem item;
   
-  final int index;
+  // final int index;
   
   final MyAudioHandler audioHandler;
   
-  const SongPlayerPage({super.key, required this.item,required this.index, required this.audioHandler});
+  const SongPlayerPage({super.key, required this.item, required this.audioHandler});
 
   @override
   Widget build(BuildContext context) {
@@ -248,6 +248,7 @@ class _PlayerContent extends StatelessWidget {
           // log(positionSnap.data.toString());
            
             final total = itemSnapshot.duration ?? Duration.zero;
+            // print("jjjjj${itemSnapshot.duration!.inMinutes}");
             // Avoid division by zero when duration is zero.
             final maxSeconds = total.inSeconds > 0 ? total.inSeconds.toDouble() : 1.0;
             final value = position.inSeconds.toDouble().clamp(0.0, maxSeconds);
@@ -282,9 +283,10 @@ class _PlayerContent extends StatelessWidget {
   }
 
   String formatDuration(Duration duration) {
+    final hours = duration.inHours.remainder(60);
     final minutes = duration.inMinutes.remainder(60);
     final seconds = duration.inSeconds.remainder(60);
-    return '${minutes.toString().padLeft(2, "0")}:${seconds.toString().padLeft(2, "0")}';
+    return '${hours.toString().padLeft(2, "0")}:${minutes.toString().padLeft(2, "0")}:${seconds.toString().padLeft(2, "0")}';
   }
 
   Widget _songPlayer(BuildContext context) {

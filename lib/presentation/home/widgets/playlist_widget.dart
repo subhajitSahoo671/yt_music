@@ -15,6 +15,8 @@ class PlaylistWidget extends StatelessWidget {
   final int index;
 
   final MyAudioHandler audioHandler;
+  final VoidCallback audioHandlerInitSongs;
+
 
   final bool isFavorite;
   final Function? function;
@@ -26,6 +28,7 @@ class PlaylistWidget extends StatelessWidget {
     required this.songEntity,
     required this.index,
     required this.audioHandler,
+    required this.audioHandlerInitSongs,
     this.isFavorite = false,
     this.function,
     this.activeColor,
@@ -39,8 +42,11 @@ class PlaylistWidget extends StatelessWidget {
       builder: (context, itemSnapshot) {
         if (itemSnapshot.data != null) {
           // log(itemSnapshot.data.toString());
-          return GestureDetector(
+          return InkWell(
+            splashColor: Colors.transparent,
+            overlayColor: .all(Colors.transparent),
             onTap: () {
+              audioHandlerInitSongs();
               if (itemSnapshot.data!.id != songEntity.id) {
                 audioHandler.skipToQueueItem(index);
               }
@@ -52,7 +58,7 @@ class PlaylistWidget extends StatelessWidget {
                   builder: (context) {
                     return SongPlayerPage(
                       item: itemSnapshot.data!,
-                      index: index,
+                     
                       audioHandler: audioHandler,
                     );
                   },
@@ -72,15 +78,16 @@ class PlaylistWidget extends StatelessWidget {
                           height: 50,
                           width: 50,
                           decoration: BoxDecoration(
-                            color: AppColors.greyText
-                                .withBlue(50)
-                                .withValues(alpha: 200),
+                            color: Colors.cyan
+                                      .withValues(alpha: 150).withAlpha(150),
                             borderRadius: BorderRadius.circular(10),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(songEntity.artUri.toString()),
-                            ),
+                           
                           ),
+                          child: Image.network(songEntity.artUri.toString(),fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.network("https://img.magnific.com/premium-psd/music-note-3d-icon-with-musical-symbol-made-with-translucent-png-trendy-neon-color-shape_1020495-522146.jpg?semt=ais_hybrid&w=740&q=80",fit: BoxFit.cover);
+                    },
+                    ),
                         ),
                         SizedBox(width: 15),
                         Expanded(

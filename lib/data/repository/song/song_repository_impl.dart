@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:dartz/dartz.dart';
 import 'package:yt_music/data/data_sources/song/song_firebase_servise.dart';
 import 'package:yt_music/domain/repository/song/song.dart';
@@ -13,10 +14,25 @@ class SongRepositoryImpl extends SongRepository {
   Future<Either> getPlayList() async {
     return await sl<SongFirebaseServise>().getPlayList();
   }
+
+  @override
+  Future<Either<dynamic, dynamic>> getBollywoodHits() async{
+   return await sl<SongFirebaseServise>().getBollywoodHits();
+  }
+
+  @override
+  Future<Either<dynamic, dynamic>> getTrendingsInMonth() async{
+   return await sl<SongFirebaseServise>().getTrendingsInMonth();
+  }
+
+  @override
+  Future<Either<dynamic, dynamic>> getPopularAlbumOfWeek() async{
+   return await sl<SongFirebaseServise>().getPopularAlbumOfWeek();
+  }
   
   @override
-  Future<Either> addOrRemoveFavoriteSongs(String songId) async {
-      return await sl<SongFirebaseServise>().addOrRemoveFavoriteSongs(songId);
+  Future<Either> addOrRemoveFavoriteSongs(MediaItem songEntity) async {
+      return await sl<SongFirebaseServise>().addOrRemoveFavoriteSongs(songEntity);
   }
   
   @override
@@ -29,5 +45,6 @@ class SongRepositoryImpl extends SongRepository {
   Future<Either> getUserFavoriteSongs() {
     return sl<SongFirebaseServise>().getUserFavoriteSongs();
   }
+
   
 }

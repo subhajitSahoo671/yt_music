@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yt_music/domain/entities/song/song.dart';
 import 'package:yt_music/domain/usecases/song/get_favorite_songs.dart';
@@ -9,7 +10,7 @@ import 'package:yt_music/service_locator.dart';
 class FavoriteSongsCubit extends Cubit<FavoriteSongsState> {
   FavoriteSongsCubit(): super(FavoriteSongsLoading());
 
-  List<SongEntity> favoriteSongs = [];
+  List<MediaItem> favoriteSongs = [];
 
   Future<void> getFavoriteSongs() async {
     try {

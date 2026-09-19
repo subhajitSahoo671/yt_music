@@ -22,72 +22,62 @@ class NewsSongs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => NewsSongsCubit()..getNewsSongs(),
-      child: Align(
-        alignment: AlignmentGeometry.bottomCenter,
-        child: SizedBox(
-          height: 250,
-          child: BlocBuilder<NewsSongsCubit, NewsSongsState>(
-            builder: (context, state) {
-              if (state is NewsSongsLoading) {
-                return Container(
-                  alignment: Alignment.center,
-                  child: CircularProgressIndicator.adaptive(),
-                );
-              }
-              if (state is NewsSongsLoaded) {
-                return FutureBuilder<List<MediaItem>>(
-                  future: state.getMediaItems(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator.adaptive());
-                    }
-                    if (snapshot.hasData && snapshot.data != null) {
-                     // log("hy");
-                     if (audioHandler.mediaItem.hasValue) {
-                        return _songs(snapshot.data!);
-                     }
-                    }
-                    return SizedBox.shrink();
-                  },
-                );
-              }
-
-              return Text('Error loading songs');
-            },
-          ),
-        ),
-      ),
+    print("Pinku : $songs");
+    return Column(
+      mainAxisSize: .min,
+      children: [
+         Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  "Bollywood Hits",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+                // //Spacer(),
+                // TextButton(
+                //   onPressed: () {},
+                //   child: Text("${songs.length} Songs", style: TextStyle(fontSize: 13)),
+                // ),
+              ],
+            ),
+              SizedBox(height: 10),
+        SizedBox(
+          height: 255,
+          child: _songs()),
+      ],
     );
   }
 
-  Widget _songs(List<MediaItem> newSongs) {
+  Widget _songs() {
     //log(songs[0].title);
     return ListView.separated(
       scrollDirection: Axis.horizontal,
-      itemCount: newSongs.length,
+      itemCount: songs.length,
       separatorBuilder: (BuildContext context, int index) {
         return SizedBox(width: 15);
       },
       shrinkWrap: true,
       itemBuilder: (BuildContext context, int index) {
-        return StreamBuilder<MediaItem?>(stream: audioHandler.mediaItem, builder: (context, snapshot) {
+        return StreamBuilder<MediaItem?>(stream: audioHandler.mediaItem,
+         builder: (context, snapshot) {
           
           if (snapshot.data != null) {
             // log(  "hy${snapshot.data!.artUri}");
-            var newIndex = songs.length - index - 1;
+            // var newIndex = songs.length - index - 1;
           return  GestureDetector(
-                 onTap: () {
-                 
-              if (snapshot.data!.id != songs[newIndex].id) {
-                  audioHandler.skipToQueueItem(newIndex);
+                 onTap: () async{
+                  await audioHandler.initSongsIfNeeded(songs: songs);
+              if (snapshot.data!.id != songs[index].id) {
+                  audioHandler.skipToQueueItem(index);
                 }
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return SongPlayerPage(item: snapshot.data!,audioHandler: audioHandler,index: index);
+                  return SongPlayerPage(item: snapshot.data!,audioHandler: audioHandler,);
                 },
               ),
             );
@@ -105,10 +95,10 @@ class NewsSongs extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30),
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: NetworkImage(newSongs[index].artUri.toString()),
+                      image: NetworkImage(songs[index].artUri.toString()),
                     ),
                   ),
-                  child: snapshot.data!.id == songs[newIndex].id 
+                  child: snapshot.data!.id == songs[index].id 
                   ? Align(
                     alignment: Alignment.bottomRight,
                     child: Container(
@@ -139,13 +129,13 @@ class NewsSongs extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  newSongs[index].title,
+                  songs[index].title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: snapshot.data!.id == songs[newIndex].id ? Colors.purpleAccent.shade700.withGreen(
+                    color: snapshot.data!.id == songs[index].id ? Colors.purpleAccent.shade700.withGreen(
                                           110,
                                         ) : null,
                     // color: Colors.white
@@ -153,7 +143,7 @@ class NewsSongs extends StatelessWidget {
                 ),
                 SizedBox(height: 5),
                 Text(
-                  newSongs[index].artist!,
+                  songs[index].artist!,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   softWrap: true,

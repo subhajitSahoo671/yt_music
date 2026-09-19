@@ -6,30 +6,30 @@ abstract class NewsSongsState {}
 class NewsSongsLoading extends NewsSongsState {}
 
 class NewsSongsLoaded extends NewsSongsState {
-  final List<SongEntity> songs;
+  final List<MediaItem> songs;
 
   NewsSongsLoaded({required this.songs});
 
-   Future<List<MediaItem>> getMediaItems() async {
-    List<MediaItem> items = [];
+  //  Future<List<MediaItem>> getMediaItems() async {
+  //   List<MediaItem> items = [];
 
-    for (SongEntity song in songs) {
-      items.add(
-        MediaItem(
-          id: song.songURL,
-          // playable: song.isFavorite,
-          genre: song.songId,
-          // album: song.album ?? 'Unknown Album',
-          title: song.title,
-          artist: song.artist,
-          artUri: Uri.parse(song.imageURL),
-          duration: Duration(seconds: song.duration.toInt()),
-        ),
-      );
-    }
+  //   for (SongEntity song in songs) {
+  //     items.add(
+  //       MediaItem(
+  //         id: song.songURL,
+  //         // playable: song.isFavorite,
+  //         genre: song.songId,
+  //         // album: song.album ?? 'Unknown Album',
+  //         title: song.title,
+  //         artist: song.artist,
+  //         artUri: Uri.parse(song.imageURL),
+  //         duration: Duration(seconds: song.duration.toInt()),
+  //       ),
+  //     );
+  //   }
 
-    return items;
-  }
+  //   return items;
+  // }
 }
 
 class NewsSongsLoadFailure extends NewsSongsState {}

@@ -189,19 +189,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   }
 
                   if (state is FavoriteSongsLoaded) {
-                    return FutureBuilder<List<MediaItem>>(
-                      future: state.getMediaItems(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(
-                            child: CircularProgressIndicator.adaptive(),
-                          );
-                        }
-                        if (snapshot.hasData && snapshot.data != null) {
-                          return ListView.separated(
+                    return ListView.separated(
                             physics: BouncingScrollPhysics(),
-                            itemCount: snapshot.data!.length,
+                            itemCount: state.favoriteSongs.length,
                             separatorBuilder:
                                 (BuildContext context, int index) {
                               return SizedBox(height: 17);
@@ -213,19 +203,21 @@ class _ProfilePageState extends State<ProfilePage> {
                                       .read<FavoriteSongsCubit>()
                                       .removeSong(index);
                                 },
-                                songEntity: snapshot.data![index],
+                                songEntity: state.favoriteSongs[index],
                                 index: index,
                                 audioHandler: audioHandler,
                                 isFavorite: true,
                                 activeColor: Colors.cyanAccent,
                                 textColor: AppColors.lightBackground,
+                                audioHandlerInitSongs: () async {
+            if (state.favoriteSongs.isEmpty) {
+              return;
+            }
+            await audioHandler.initSongsIfNeeded(songs: state.favoriteSongs);
+          },
                               );
                             },
                           );
-                        }
-                        return Container();
-                      },
-                    );
                   }
 
                   if (state is FavoriteSongsFailure) {
