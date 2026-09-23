@@ -19,6 +19,7 @@ import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:yt_music/core/services/my_audio_handler.dart';
+import 'package:yt_music/presentation/profile/bloc/favorite_songs_cubit.dart';
 
 
 Future<void> main() async {
@@ -77,6 +78,9 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => ThemeCubit()),
+        BlocProvider(
+          create: (_) => FavoriteSongsCubit()..getFavoriteSongs(),
+        ),
       ],
       child: BlocBuilder<ThemeCubit,ThemeMode>(
         builder: (context, mode) => MaterialApp(

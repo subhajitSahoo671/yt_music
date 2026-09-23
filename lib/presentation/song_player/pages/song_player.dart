@@ -2,11 +2,13 @@
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:yt_music/common/widgets/favorite_button/favorite_button.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yt_music/core/configs/theme/app_colors.dart';
 import 'package:yt_music/core/services/my_audio_handler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:yt_music/presentation/home/widgets/play_list.dart';
 
 class SongPlayerPage extends StatelessWidget {
   final MediaItem item;
@@ -16,6 +18,8 @@ class SongPlayerPage extends StatelessWidget {
   final MyAudioHandler audioHandler;
   
   const SongPlayerPage({super.key, required this.item, required this.audioHandler});
+
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +33,12 @@ class SongPlayerPage extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: FaIcon(FontAwesomeIcons.barsStaggered, size: 20),
-          ),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {},
+        //     icon: FaIcon(FontAwesomeIcons.barsStaggered, size: 20),
+        //   ),
+        // ],
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -54,6 +58,53 @@ class _PlayerContent extends StatelessWidget {
   final MyAudioHandler audioHandler;
 
   const _PlayerContent({required this.item, required this.audioHandler});
+
+  Future<void> _shareSong(BuildContext context, MediaItem item) async {
+    final songUrl = item.extras?['songURL'] as String? ?? item.id;
+    final uri = Uri.tryParse(songUrl);
+
+    if (uri == null || !uri.hasScheme) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('This song has no shareable link.')),
+      );
+      return;
+    }
+
+    final text =
+        'Check out "${item.title}" on my ZYNC music app! Listen here: $songUrl';
+    await SharePlus.instance.share(
+      ShareParams(
+        text: text,
+        title: item.title,
+        // uri: uri,
+      ),
+    );
+  }
+
+  void _showPlaylistBottomSheet(BuildContext context){
+     showModalBottomSheet(context: context,
+     backgroundColor: AppColors.primary,
+      barrierColor: Colors.black.withAlpha(200),
+      barrierLabel: "Playlist",
+      clipBehavior: Clip.antiAlias,
+      isScrollControlled: true,
+      anchorPoint: Offset(100, 100),
+      useSafeArea: true,
+      enableDrag: true,
+      // showDragHandle: true,
+      elevation: 20,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.heightOf(context) * 0.70,
+        maxWidth: 400,
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return PlayList(audioHandler: audioHandler, songs: audioHandler.queue.value, playlistTitle: "playlistTitle",isBottomSheet : true,);
+      },
+      );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,14 +165,14 @@ class _PlayerContent extends StatelessWidget {
         );
   }
 
-  Widget _songCover(BuildContext context, MediaItem itemSnapshot) {
+  Widget _songCover(BuildContext context, MediaItem item) {
     return Container(
       height: MediaQuery.of(context).size.width / 1.4,
       width: MediaQuery.of(context).size.width / 1.4,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         image: DecorationImage(
-          image: NetworkImage(itemSnapshot.artUri.toString()),
+          image: NetworkImage(item.artUri.toString()),
           fit: BoxFit.cover,
         ),
       ),
@@ -171,11 +222,11 @@ class _PlayerContent extends StatelessWidget {
 
    
 
-  Widget _songDetails( MediaItem itemSnapshot) {
+  Widget _songDetails( MediaItem item) {
     return Column(
       children: [
         Text(
-          itemSnapshot.title,
+          item.title,
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
           style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
@@ -184,7 +235,7 @@ class _PlayerContent extends StatelessWidget {
         Text(
           overflow: TextOverflow.ellipsis,
           maxLines: 1,
-          itemSnapshot.artist ?? 'Unknown Artist',
+          item.artist ?? 'Unknown Artist',
           style: TextStyle(
             color: Colors.pinkAccent.shade700,
             fontSize: 12,
@@ -195,7 +246,7 @@ class _PlayerContent extends StatelessWidget {
     );
   }
 
-  Widget songTools(BuildContext context, itemSnapshot) {
+  Widget songTools(BuildContext context,MediaItem itemSnapshot) {
     return SizedBox(
       width: MediaQuery.sizeOf(context).width,
       height: 40,
@@ -212,7 +263,9 @@ class _PlayerContent extends StatelessWidget {
             radius: BorderRadius.circular(30),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+                _showPlaylistBottomSheet(context);
+            },
             icon: Icon(
               Icons.queue_music_rounded,
               size: 32,
@@ -227,7 +280,13 @@ class _PlayerContent extends StatelessWidget {
             radius: BorderRadius.circular(30),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              // print("wwe ${itemSnapshot.extras!["songURL"]}");
+              _shareSong(
+                context,
+                itemSnapshot
+              );
+            },
             icon: FaIcon(
               FontAwesomeIcons.shareNodes,
               color: Colors.pink.shade800,

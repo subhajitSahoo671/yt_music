@@ -27,7 +27,10 @@ class _RootPageState extends State<RootPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(create: (context) => PlayListCubit()..getBollyHits(), 
+    return MultiBlocProvider(
+    providers: [  
+      BlocProvider<PlayListCubit>(create: (context) => PlayListCubit()..getBollyHits(), ),
+          ],
               child: BlocBuilder<PlayListCubit, PlayListState>(
                 builder: (context, state) {
                   if (state is PlayListLoading) {

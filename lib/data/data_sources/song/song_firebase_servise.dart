@@ -201,7 +201,7 @@ class SongFirebaseServiseImpl extends SongFirebaseServise {
       var user = firebaseAuth.currentUser;
       String uId = user!.uid;
 
-      print("jjjdjdj");
+      // print("jjjdjdj");
 
       QuerySnapshot favoriteSongs = await firebaseFirestore
           .collection("Users")
@@ -213,10 +213,13 @@ class SongFirebaseServiseImpl extends SongFirebaseServise {
       if (favoriteSongs.docs.isNotEmpty) {
         print("favoriteSongsNotEmpty");
 
+        isFavorite = true;
         await favoriteSongs.docs.first.reference.delete();
-        isFavorite = false;
+        // isFavorite = false;
       } else {
         print("favoriteSongsEmpty");
+
+        isFavorite = false;
         await firebaseFirestore
             .collection("Users")
             .doc(uId)
@@ -232,13 +235,13 @@ class SongFirebaseServiseImpl extends SongFirebaseServise {
                 "addedDate": Timestamp.now()
                 }
                 );
-        isFavorite = true;
+        // isFavorite = true;
       }
 
       return right(isFavorite);
     } on FirebaseException catch (e) {
       print("FirebaseException occurs : ${e.message}");
-      return left("An error occurred");
+      return left("An error occurred ${e.message}");
     }
   }
 

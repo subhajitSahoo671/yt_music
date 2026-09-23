@@ -1,6 +1,10 @@
 # flutter pub run flutter_launcher_icons
 flutter_launcher_icons:
   image_path: "assets/images/musicAppIcon999.png"
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/images/musicAppIcon999.png"
+  adaptive_icon_foreground_inset: 22
+  adaptive_icon_monochrome: "assets/images/musicAppIcon999.png"
 
   android: "launcher_icon"
   # image_path_android: "assets/icon/icon.png"

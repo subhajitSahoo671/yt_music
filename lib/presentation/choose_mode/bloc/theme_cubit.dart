@@ -3,7 +3,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 class ThemeCubit extends HydratedCubit<ThemeMode> {
 
-  ThemeCubit() : super(ThemeMode.system);
+  ThemeCubit() : super(ThemeMode.dark);
 
   void updateTheme(ThemeMode themeMode) => emit(themeMode);
 

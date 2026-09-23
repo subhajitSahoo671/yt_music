@@ -69,15 +69,23 @@ class NewsSongs extends StatelessWidget {
             // var newIndex = songs.length - index - 1;
           return  GestureDetector(
                  onTap: () async{
-                  await audioHandler.initSongsIfNeeded(songs: songs);
-              if (snapshot.data!.id != songs[index].id) {
+
+              //     await audioHandler.initSongsIfNeeded(songs: songs);
+              // if (snapshot.data!.id != songs[index].id) {
+              //     audioHandler.skipToQueueItem(index);
+              //   }
+
+             await  audioHandler.initSongsIfNeeded(songs: songs).then((_) {
+                if (snapshot.data!.id != songs[index].id) {
                   audioHandler.skipToQueueItem(index);
                 }
+              });
+                
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return SongPlayerPage(item: snapshot.data!,audioHandler: audioHandler,);
+                  return SongPlayerPage(item: songs[index],audioHandler: audioHandler,);
                 },
               ),
             );

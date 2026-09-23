@@ -61,6 +61,7 @@ dependencies:
   # transparent_image: ^2.0.1
   # audio_video_progress_bar: ^2.0.3
   skeletonizer: ^3.0.0
+  share_plus: ^13.3.0
 
 dev_dependencies:
   flutter_test:

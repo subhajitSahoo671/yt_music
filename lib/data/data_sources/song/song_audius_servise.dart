@@ -6,7 +6,7 @@ class AudiusService {
   final String appName = "ZYNC"; // Required by Audius
 
   Future<List<dynamic>> fetchTrendingTracks() async {
-    final url = Uri.parse('$baseUrl/tracks/trending?app_name=$appName&offset=5&limit=15&time=month');
+    final url = Uri.parse('$baseUrl/tracks/trending?app_name=$appName&offset=0&limit=15&time=month');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -18,7 +18,7 @@ class AudiusService {
   }
 
   Future<List<dynamic>> fetchLatestTracks() async {
-    final url = Uri.parse('$baseUrl/tracks/latest?app_name=$appName&offset=5&limit=12');
+    final url = Uri.parse('$baseUrl/tracks/latest?app_name=$appName&offset=0&limit=12');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -30,7 +30,7 @@ class AudiusService {
   }
 
   Future<List<dynamic>> fetchTrendingsInMonth() async {
-    final url = Uri.parse('$baseUrl/playlists/trending?app_name=$appName&offset=5&limit=10&time=month&type=playlist&omit_tracks=false');
+    final url = Uri.parse('$baseUrl/playlists/trending?app_name=$appName&offset=0&limit=15&time=month&type=playlist&omit_tracks=false');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -42,7 +42,7 @@ class AudiusService {
   }
 
   Future<List<dynamic>> fetchPopularAlbumOfWeek() async {
-    final url = Uri.parse('$baseUrl/playlists/trending?app_name=$appName&offset=4&limit=13&time=week&type=album&omit_tracks=false');
+    final url = Uri.parse('$baseUrl/playlists/trending?app_name=$appName&offset=0&limit=13&time=week&type=album&omit_tracks=false');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

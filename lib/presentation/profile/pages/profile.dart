@@ -162,74 +162,72 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _favoriteSongs(MyAudioHandler audioHandler, BuildContext context) {
-    return BlocProvider(
-      create: (context) => FavoriteSongsCubit()..getFavoriteSongs(),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 25),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Text(
-              "FAVORITE SONGS",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: AppColors.lightBackground,
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            "FAVORITE SONGS",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppColors.lightBackground,
             ),
-            SizedBox(height: 15),
-            Expanded(
-              child: BlocBuilder<FavoriteSongsCubit, FavoriteSongsState>(
-                builder: (context, state) {
-                  if (state is FavoriteSongsLoading) {
-                    return Center(
-                      child: CircularProgressIndicator.adaptive(),
-                    );
-                  }
-
-                  if (state is FavoriteSongsLoaded) {
-                    return ListView.separated(
-                            physics: BouncingScrollPhysics(),
-                            itemCount: state.favoriteSongs.length,
-                            separatorBuilder:
-                                (BuildContext context, int index) {
-                              return SizedBox(height: 17);
-                            },
-                            itemBuilder: (BuildContext context, int index) {
-                              return PlaylistWidget(
-                                function: () {
-                                  context
-                                      .read<FavoriteSongsCubit>()
-                                      .removeSong(index);
-                                },
-                                songEntity: state.favoriteSongs[index],
-                                index: index,
-                                audioHandler: audioHandler,
-                                isFavorite: true,
-                                activeColor: Colors.cyanAccent,
-                                textColor: AppColors.lightBackground,
-                                audioHandlerInitSongs: () async {
-            if (state.favoriteSongs.isEmpty) {
-              return;
-            }
-            await audioHandler.initSongsIfNeeded(songs: state.favoriteSongs);
-          },
-                              );
-                            },
-                          );
-                  }
-
-                  if (state is FavoriteSongsFailure) {
-                    return Text("Please try again");
-                  }
-
-                  return Container();
-                },
-              ),
+          ),
+          SizedBox(height: 15),
+          Expanded(
+            child: BlocBuilder<FavoriteSongsCubit, FavoriteSongsState>(
+              builder: (context, state) {
+                if (state is FavoriteSongsLoading) {
+                  return Center(
+                    child: CircularProgressIndicator.adaptive(),
+                  );
+                }
+    
+                if (state is FavoriteSongsLoaded) {
+                  return ListView.separated(
+                          physics: BouncingScrollPhysics(),
+                          itemCount: state.favoriteSongs.length,
+                          separatorBuilder:
+                              (BuildContext context, int index) {
+                            return SizedBox(height: 17);
+                          },
+                          itemBuilder: (BuildContext context, int index) {
+                            return PlaylistWidget(
+                              // function: () {
+                              //   context
+                              //       .read<FavoriteSongsCubit>()
+                              //       .removeSong(index);
+                              // },
+                              songEntity: state.favoriteSongs[index],
+                              index: index,
+                              audioHandler: audioHandler,
+                              isFavorite: true,
+                              activeColor: Colors.cyanAccent,
+                              textColor: AppColors.lightBackground,
+                              audioHandlerInitSongs: () async {
+          if (state.favoriteSongs.isEmpty) {
+            return;
+          }
+          await audioHandler.initSongsIfNeeded(songs: state.favoriteSongs);
+          //  audioHandler.skipToQueueItem(index);
+        },
+                            );
+                          },
+                        );
+                }
+    
+                if (state is FavoriteSongsFailure) {
+                  return Text("Please try again");
+                }
+    
+                return Container();
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

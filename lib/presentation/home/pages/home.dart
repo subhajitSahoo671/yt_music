@@ -429,7 +429,7 @@ class _HomePageState extends State<HomePage> {
           context,
           MaterialPageRoute(
             builder: (context) =>
-                PlayList(audioHandler: widget.audioHandler, songs: songs),
+                PlayList(audioHandler: widget.audioHandler, songs: songs.toSet().toList(),playlistTitle: listTitle,),
           ),
         ),
         child: Container(

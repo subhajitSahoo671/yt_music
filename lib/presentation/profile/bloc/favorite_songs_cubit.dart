@@ -18,12 +18,15 @@ class FavoriteSongsCubit extends Cubit<FavoriteSongsState> {
 
       if (isClosed) return; // avoid emitting after disposal
 
+
       result.fold(
         (l) {
           if (!isClosed) emit(FavoriteSongsFailure());
         },
         (r) {
           favoriteSongs = r;
+        // print("state.favoriteSongs $favoriteSongs");
+
           if (!isClosed) emit(FavoriteSongsLoaded(favoriteSongs: favoriteSongs));
         },
       );
@@ -32,9 +35,15 @@ class FavoriteSongsCubit extends Cubit<FavoriteSongsState> {
       if (!isClosed) emit(FavoriteSongsFailure());
     }
   }
+  
 
-  void removeSong(int index) {
-    favoriteSongs.removeAt(index);
+  void removeSong(MediaItem song) {
+    favoriteSongs.remove(song);
+    if (!isClosed) emit(FavoriteSongsLoaded(favoriteSongs: favoriteSongs));
+  }
+
+  void addSong(MediaItem song) {
+    favoriteSongs.add(song);
     if (!isClosed) emit(FavoriteSongsLoaded(favoriteSongs: favoriteSongs));
   }
 }

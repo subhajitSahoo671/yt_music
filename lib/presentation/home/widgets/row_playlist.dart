@@ -66,7 +66,7 @@ class RowPlaylist extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return PlayList(audioHandler: audioHandler,songs: playlists[index].tracks,);
+                    return PlayList(audioHandler: audioHandler,songs: playlists[index].tracks.toSet().toList(),playlistData: playlists[index],playlistTitle:  playlists[index].isAlbum ? "Album" : "Playlist",);
                   },
                 ),
               );

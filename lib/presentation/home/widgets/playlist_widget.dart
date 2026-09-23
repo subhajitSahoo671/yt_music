@@ -15,13 +15,14 @@ class PlaylistWidget extends StatelessWidget {
   final int index;
 
   final MyAudioHandler audioHandler;
-  final VoidCallback audioHandlerInitSongs;
+  final Function audioHandlerInitSongs;
 
 
   final bool isFavorite;
   final Function? function;
   final Color? activeColor;
   final Color? textColor;
+  final bool? isBottomSheet;
 
   const PlaylistWidget({
     super.key,
@@ -30,6 +31,7 @@ class PlaylistWidget extends StatelessWidget {
     required this.audioHandler,
     required this.audioHandlerInitSongs,
     this.isFavorite = false,
+    this.isBottomSheet = false,
     this.function,
     this.activeColor,
     this.textColor,
@@ -45,25 +47,33 @@ class PlaylistWidget extends StatelessWidget {
           return InkWell(
             splashColor: Colors.transparent,
             overlayColor: .all(Colors.transparent),
-            onTap: () {
-              audioHandlerInitSongs();
-              if (itemSnapshot.data!.id != songEntity.id) {
-                audioHandler.skipToQueueItem(index);
-              }
-              Navigator.push(
+            onTap: () async{
+             
+             if (isBottomSheet == false) {
+               await audioHandlerInitSongs();
+             }
+
+             if (itemSnapshot.data!.id != songEntity.id) {
+                  audioHandler.skipToQueueItem(index);
+                }
+             
+             if (isBottomSheet == false) {
+                Navigator.push(
                 context,
                 MaterialPageRoute(
                   traversalEdgeBehavior: TraversalEdgeBehavior.closedLoop,
 
                   builder: (context) {
                     return SongPlayerPage(
-                      item: itemSnapshot.data!,
+                      item: songEntity,
                      
                       audioHandler: audioHandler,
                     );
                   },
                 ),
               );
+             }
+             
             },
             child: SizedBox(
               width: MediaQuery.sizeOf(context).width,
@@ -71,7 +81,7 @@ class PlaylistWidget extends StatelessWidget {
                 //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    flex: 7,
+                    flex: 8,
                     child: Row(
                       children: [
                         Container(
